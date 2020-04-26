@@ -1,67 +1,58 @@
-from math import floor
-
-
 def count_inversions(arr, left, right):
-    if len(arr) == 1:
-        return arr
+    inversions_number = 0
 
-    mid = floor((left + right) / 2)
+    if left == right:
+        return inversions_number
 
-    left_half_arr = count_inversions(arr[:mid + 1], left, mid)  # split left half
-    right_half_arr = count_inversions(arr[mid + 1:], left, mid)  # split right half
-    return merge_arrays(left_half_arr, right_half_arr)
+    mid = (left + right) // 2
+
+    inversions_number += count_inversions(arr, left, mid)  # split left half
+    inversions_number += count_inversions(arr, mid + 1, right)  # split right half
+    inversions_number += merge_arrays(arr, left, mid, right)
+    return inversions_number
 
 
-def merge_arrays(left_arr, right_arr):
-    global inversions_number
-    res_arr = []
-    left_len = len(left_arr)
-    right_len = len(right_arr)
+def merge_arrays(array, left, mid, right):
+    inversions_number = 0
 
-    i = 0
-    j = 0
-    while len(res_arr) < (left_len + right_len):
-        if j == right_len:
-            res_arr.append(left_arr[i])
+    i = left
+    j = mid + 1
+    k = left
+    temp_arr = array[0:]
+
+    while k <= right:
+        if j == right + 1:
+            temp_arr[k] = array[i]
+            k += 1
             i += 1
-        elif i == left_len:
-            res_arr.append(right_arr[j])
+        elif i == mid + 1:
+            temp_arr[k] = array[j]
+            k += 1
             j += 1
-        elif left_arr[i] < right_arr[j]:
-            res_arr.append(left_arr[i])
+        elif array[i] <= array[j]:
+            temp_arr[k] = array[i]
+            k += 1
             i += 1
         else:
-            res_arr.append(right_arr[j])
+            temp_arr[k] = array[j]
+            k += 1
             j += 1
-            inversions_number += left_len - i
-    return res_arr
+            inversions_number += (mid + 1) - i
+
+    for tindex in range(left, right + 1):
+        array[tindex] = temp_arr[tindex]
+
+    return inversions_number
 
 
 # given_array = [6, 5, 3, 1, 8, 7, 2, 4]
-given_array = [1, 3, 5, 6, 2, 4, 7, 8]
+# given_array = [1, 3, 5, 6, 2, 4, 7, 8]
 # given_array = [1,3,6,7,2,4,5,8]
+# given_array = [8, 4, 2, 1, 9]
+# given_array = [4,8,3,5,2]
+# given_array = [4, 8, 3, 5]
 # given_array = [8, 4, 2, 1]
-# given_array = [4,8,1,2]
 # given_array = [4,8,12,1,2,3]
-inversions_number = 0
-sorted_array = count_inversions(given_array, 0, len(given_array) - 1)
-print(inversions_number)
+given_array = [8, 4, 2, 1, 9, 5, 3, 2]
 
-
-# Python3 program to count inversions in an array
-# This code is contributed by Smitha Dinesh Semwal
-# Taken from https://www.geeksforgeeks.org/counting-inversions/
-
-def getInvCount(arr, n):
-    inv_count = 0
-    for i in range(n):
-        for j in range(i + 1, n):
-            if (arr[i] > arr[j]):
-                inv_count += 1
-
-    return inv_count
-
-
-# Driver Code
-n = len(given_array)
-print("Number of inversions are", getInvCount(given_array, n))
+print('Inversions number: ' + str(count_inversions(given_array, 0, len(given_array) - 1)))
