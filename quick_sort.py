@@ -1,3 +1,6 @@
+from random import randint
+
+
 def quick_sort(arr, low, high):
     if low < high:
         partition_index = partition(arr, low, high)
@@ -12,9 +15,11 @@ def partition(arr, low, high):
 
 # Udacity variant https://www.youtube.com/watch?v=kUon6854joIs
 def partition_by_last_element_as_a_pivot(arr, low, high):
-    pivot = arr[high]  # splitPoint element
-    pivot_index = high
+    pivot_index = choose_pivot_index(arr, low, high)
+    pivot = arr[pivot_index]  # splitPoint element - Pivot
     i = low
+    # replace last element with pivot element to keep further flow
+    arr[pivot_index], arr[high], pivot_index = arr[high], arr[pivot_index], high
 
     while i < pivot_index:
         if arr[i] > pivot:
@@ -35,8 +40,9 @@ def partition_by_last_element_as_a_pivot(arr, low, high):
     return pivot_index
 
 
-def partition_by_random_element_as_a_pivot(arr, low, high):
-    return 0
+def choose_pivot_index(arr, low, high):
+    # return high  # last element's index
+    return randint(low, high)  # random index
 
 
 given_array = [6, 5, 3, 1, 8, 7, 2, 4]
